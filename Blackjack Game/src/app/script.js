@@ -39,16 +39,49 @@ newGameButton.addEventListener('click', function() {
   dealerCards = [ getNextCard(), getNextCard() ];
   playerCards = [ getNextCard(), getNextCard() ];
   
+  showStatus();
+  
   newGameButton.style.display = 'none';
   hitButton.style.display = 'inline';
   stayButton.style.display = 'inline';
+  
+// if Player is dealt 21 on opening hand
+  if (playerCards.splice(2, 52) && playerScore === 21 && dealerScore < 21) {
+    playerWon = true;
+    gameOver = true;
+    
+    showStatus();
+    updateScores();
+  }
+  else {
+    newGameButton.style.display = 'none';
+    hitButton.style.display = 'inline';
+    stayButton.style.display = 'inline';
+  }
+  
+// if Dealer is dealt 21 on opening hand
+  if (dealerCards.splice(2, 52) && dealerScore === 21 && playerScore < 21) {
+    playerWon = false;
+    gameOver = true;
+    
+    showStatus();
+    updateScores();
+  }
+  else {
+    newGameButton.style.display = 'none';
+    hitButton.style.display = 'inline';
+    stayButton.style.display = 'inline';
+  }
+  
   showStatus();
+  updateScores();
 });
 
 hitButton.addEventListener('click', function() {
   playerCards.push(getNextCard());
   checkForEndOfGame();
   showStatus();
+  updateScores();
 });
 
 stayButton.addEventListener('click', function() {
@@ -149,7 +182,11 @@ function checkForEndOfGame() {
     }
   }
   
-  if (playerScore > 21) {
+  if ((playerCards.length < 3) && playerScore === 21) {
+    playerWon = true;
+    gameOver = true;
+  }
+  else if (playerScore > 21) {
     playerWon = false;
     gameOver = true;
   }
